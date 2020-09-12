@@ -23,6 +23,9 @@ class API
         rescue JSON::ParserError => e  
           puts "ooof"
           CLI.reboot
+        rescue URI::InvalidURIError
+            puts "BAD URI ERROR"
+            CLI.reboot
         end 
         
         # Iterate data, pull out relevent info to push into events class
