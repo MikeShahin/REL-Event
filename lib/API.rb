@@ -11,17 +11,26 @@ class API
         event_type = event_type_split.join("+")
         loc_split = location.split(" ")
         loc = loc_split.join("+")
-        url = BASE_URL + 'events/search?app_key=' + API_KEY + "&keywords=#{event_type}" + "&location=#{loc}" + "&page_size=#{num}" + "&page_number=#{page}&sort_order=date"
-        #make http request
-        uri = URI.parse(url)
-        body = uri.read
-        resp = Net::HTTP.get_response(uri)
-        data = JSON.parse(resp.body)
-        # binding.pry
+        
+        begin   
+            url = BASE_URL + 'events/search?app_key=' + API_KEY + "&keywords=#{event_type}" + "&location=#{loc}" + "&page_size=#{num}" + "&page_number=#{page}&sort_order=date"
+            #make http request
+            uri = URI.parse(url)
+            body = uri.read
+            resp = Net::HTTP.get_response(uri)
+            data = JSON.parse(resp.body)
+            # binding.pry
+        rescue JSON::ParserError => e  
+          puts "ooof"
+          CLI.reboot
+        end 
         
         # Iterate data, pull out relevent info to push into events class
         if (data["total_items"] == "0")
             puts "nothing found, lets try this again"
+            CLI.reboot
+        elsif (data == nil)
+            puts "you fucked up big time"
             CLI.reboot
         else
         data_array = data["events"]
