@@ -32,9 +32,9 @@ class API
         if (data["total_items"] == "0")
             puts "nothing found, lets try this again"
             CLI.reboot
-        elsif (data == nil)
-            puts "you fucked up big time"
-            CLI.reboot
+        # elsif (data == nil)
+        #     puts "you fucked up big time"
+        #     CLI.reboot
         else
         data_array = data["events"]
         
