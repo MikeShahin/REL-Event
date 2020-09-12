@@ -4,19 +4,11 @@ class CLI
         Events.clear_all
         opening
         opening_menu
-        #fetch_event
-        #list_events
         if (API.returned_results.to_i < @args[2].to_i)
-            # Events.clear_all 
-            # # API.new.fetch_events(@args[0], @args[1], @args[2])
-            # # list_events
-            # puts "these are all the results"
-            # opening_menu
             after_final_results
         else more_results
         end
         more_results
-        # reboot
     end
 
     def opening
@@ -48,6 +40,12 @@ class CLI
         end
     end
     
+    def fetch_cat
+        puts "Here are some examples of different categories you can search for:"
+        API.new.fetch_categories
+        list_cat
+    end
+
     def list_cat
         i = 1
         Category.all.each do |c|
@@ -58,12 +56,6 @@ class CLI
         sleep(1)
         fetch_event
     end
-
-    def fetch_cat
-        puts "Here are the different categories:"
-        API.new.fetch_categories
-        list_cat
-    end
     
     def fetch_event
         args = []
@@ -71,75 +63,22 @@ class CLI
         puts "what type of event are you looking for?"
         event_type = gets.strip.to_s
         
-        puts "Where should the events be?"
+        puts "Where should the events be? (enter a city, state, zip code, or country)"
         event_location = gets.strip.to_s
         
         puts "How many events would you like to see?"
         results_num = gets.strip
         
-        args.push(event_type)
-        args.push(event_location)
-        args.push(results_num)
+        args.push(event_type, event_location, results_num)
         
         API.new.fetch_events(event_type, event_location, results_num)
+        
         puts ("\nFound " + (API.returned_results) + " results! Showing you "  + (Events.all.count).to_s + " results\n").light_blue
         list_events
+        
         @args = args
     end
-    
-    def options_after_results
-        puts "1. Get " + (Events.all.count).to_s + " more result(s)."
-        puts "2. Start over"
-        puts "3. Exit" 
-    end
 
-    def after_final_results
-        puts "These are all of the results, would you like to start over?"
-        puts "Enter 1 to restart the program, 2 to exit"
-        user = gets.strip
-        if (user == "1")
-            run
-        elsif (user == "2")
-            exit
-        else
-            puts "Sorry, can you please repeat that?"
-        end
-    end
-    
-    def more_results
-        page = 1
-        i = @args[2].to_i
-        options_after_results
-        input = gets.strip
-        if (API.returned_results.to_i > @args[2].to_i)   
-            while (input == "1") && (API.returned_results.to_i > @args[2].to_i)
-                i += @args[2].to_i
-                page += 1
-                Events.clear_all
-                if (page == API.page_count.to_i)
-                    API.new.fetch_events(@args[0], @args[1], @args[2], page)
-                    list_events
-                    after_final_results
-                else
-                    API.new.fetch_events(@args[0], @args[1], @args[2], page)
-                    puts ("\nShowing "  + (Events.all.count).to_s + " more result(s)\n").light_blue
-                    list_events
-                    options_after_results
-                    input = gets.strip  
-                end
-            end
-        end
-
-        if (input == "2")
-            Events.clear_all
-            run
-        elsif (input == "3")
-            exit
-        else puts "Sorry, either there are no more results or you spelled something wrong, re-check and enter either 2, or 3"
-            more_results
-        end
-    end
-    
     def list_events
         Events.all.each do |e|
             puts "#########################################################################"
@@ -158,12 +97,63 @@ class CLI
             puts "#########################################################################\n\n"
         end
     end
-        
-    def self.reboot
-        puts "Lets try this again..."
-        sleep(1)
-        Events.clear_all
-        CLI.new.run
+    
+    def options_after_results
+        puts "1. Get " + @args[2].to_s + " more result(s)."
+        puts "2. Start over"
+        puts "3. Exit" 
+    end
+    
+    def more_results
+        page = 1
+        i = @args[2].to_i
+        s = @args[2].to_i
+        options_after_results
+        input = gets.strip
+        if (API.returned_results.to_i > @args[2].to_i)   
+            while (input == "1") && (API.returned_results.to_i > @args[2].to_i)
+                i += @args[2].to_i
+                page += 1
+                Events.clear_all
+                if (page == API.page_count.to_i)
+                    API.new.fetch_events(@args[0], @args[1], @args[2], page)
+                    list_events
+                    after_final_results
+                else
+                    API.new.fetch_events(@args[0], @args[1], @args[2], page)
+                    list_events
+                    puts ("\nShowing " + (i + 1 - s).to_s + "-" + i.to_s + " of " + API.returned_results + " result(s)\n").light_blue
+                    options_after_results
+                    input = gets.strip  
+                end
+            end
+        end
+        if (input == "2")
+            Events.clear_all
+            run
+        elsif (input == "3")
+            exit
+        else puts "Sorry, either there are no more results or you spelled something wrong, re-check and enter either 2, or 3"
+            more_results
+        end
     end
 
+    def after_final_results
+        puts "These are all of the results, would you like to start over?"
+        puts "Enter 1 to restart the program, 2 to exit"
+        user = gets.strip
+        if (user == "1")
+            run
+        elsif (user == "2")
+            exit
+        else
+            puts "Sorry, can you please repeat that?"
+        end
+    end
+        
+    def self.reboot
+        puts "Rebooting...".red.bold
+        sleep(1)
+        CLI.new.run
+    end
 end
