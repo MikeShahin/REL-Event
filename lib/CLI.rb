@@ -1,16 +1,18 @@
 class CLI
 
     def run
+        Events.clear_all
         opening
         opening_menu
         #fetch_event
         #list_events
         if (API.returned_results.to_i < @args[2].to_i)
-            Events.clear_all 
-            # API.new.fetch_events(@args[0], @args[1], @args[2])
-            # list_events
-            puts "these are all the results"
-            opening_menu
+            # Events.clear_all 
+            # # API.new.fetch_events(@args[0], @args[1], @args[2])
+            # # list_events
+            # puts "these are all the results"
+            # opening_menu
+            after_final_results
         else more_results
         end
         more_results
@@ -39,7 +41,6 @@ class CLI
         if (input == "1")
             fetch_event
         elsif (input == "2")
-            puts "working"
             fetch_cat
         else
             puts "Sorry, please repeat that..."
@@ -48,7 +49,6 @@ class CLI
     end
     
     def list_cat
-        puts "got here"
         i = 1
         Category.all.each do |c|
             puts "#{i}: ".green + c.category.gsub("&amp;", "and")
@@ -82,7 +82,6 @@ class CLI
         args.push(results_num)
         
         API.new.fetch_events(event_type, event_location, results_num)
-        # API.new.fetch_events("concert", "san francisco")
         puts ("\nFound " + (API.returned_results) + " results! Showing you "  + (Events.all.count).to_s + " results\n").light_blue
         list_events
         @args = args
@@ -92,6 +91,19 @@ class CLI
         puts "1. Get " + (Events.all.count).to_s + " more result(s)."
         puts "2. Start over"
         puts "3. Exit" 
+    end
+
+    def after_final_results
+        puts "These are all of the results, would you like to start over?"
+        puts "Enter 1 to restart the program, 2 to exit"
+        user = gets.strip
+        if (user == "1")
+            run
+        elsif (user == "2")
+            exit
+        else
+            puts "Sorry, can you please repeat that?"
+        end
     end
     
     def more_results
@@ -107,8 +119,7 @@ class CLI
                 if (page == API.page_count.to_i)
                     API.new.fetch_events(@args[0], @args[1], @args[2], page)
                     list_events
-                    puts "sorry, thats all"
-                    opening_menu
+                    after_final_results
                 else
                     API.new.fetch_events(@args[0], @args[1], @args[2], page)
                     puts ("\nShowing "  + (Events.all.count).to_s + " more result(s)\n").light_blue
