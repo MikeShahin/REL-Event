@@ -77,7 +77,7 @@ class CLI
         
         API.new.fetch_events(event_type, event_location, results_num)
         
-        puts ("\nFound " + (API.returned_results) + " results! Showing you "  + (Events.all.count).to_s + " results\n").light_blue
+        puts ("\nFound #{API.returned_results} #{args[0]} event(s) near #{args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
         list_events
         # binding.pry
         @args = args
@@ -111,7 +111,7 @@ class CLI
             more_info
         elsif (input.downcase == "n")
             puts "Ok, what should we do? Please enter the number for the following:"
-            puts "1. Get " + @args[2].to_s + " more result(s)."
+            puts "1. Get #{@args[2].to_s} more result(s)."
             puts "2. Start over"
             puts "3. Exit" 
         else
@@ -168,7 +168,7 @@ class CLI
             more_info
         elsif (e[input.to_i - 1].description != nil)
             puts "#########################################################################"
-            puts "______[  #{e[input.to_i].title.green.bold}  ]______  "
+            puts "______[  " + input + ". #{e[input.to_i - 1].title.green.bold}  ]______  "
             puts "*************************************************************************"
             puts "What: ".red + e[input.to_i - 1].description
             puts "\nMore info at: ".red + e[input.to_i - 1].url.cyan
@@ -176,9 +176,9 @@ class CLI
             puts ""
         else 
             puts "#########################################################################"
-            puts "______[  #{e[input.to_i].title.green.bold}  ]______  "
+            puts "______[  " + input + ". #{e[input.to_i - 1].title.green.bold}  ]______  "
             puts "*************************************************************************"
-            puts ("\nSorry, there is no description for this event, but get more information at:")
+            puts ("Sorry, there is no description for this event, but get more information at:")
             puts e[input.to_i - 1].url.cyan
             puts "#########################################################################\n\n" 
             puts ""
