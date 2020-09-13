@@ -105,11 +105,16 @@ class CLI
     end
     
     def options_after_results
-        puts "If you would like more info about any of these events, enter Y"
-        puts "Or else enter the number or the following:"
-        puts "1. Get " + @args[2].to_s + " more result(s)."
-        puts "2. Start over"
-        puts "3. Exit" 
+        puts "If you would like more info about any of these events, enter (Y/n)"
+        input = gets.strip
+        if (input.downcase == "y")
+            more_info
+        else
+            puts "Ok, what should we do? Please enter the number for the following:"
+            puts "1. Get " + @args[2].to_s + " more result(s)."
+            puts "2. Start over"
+            puts "3. Exit" 
+        end
     end
     
     def more_results
@@ -141,9 +146,9 @@ class CLI
             run
         elsif (input == "3")
             exit
-        elsif (input.downcase == "y")
-            puts "working on more info"
-            more_info
+        # elsif (input.downcase == "y")
+        #     puts "working on more info"
+        #     more_info
         else puts "Sorry, either there are no more results or you spelled something wrong, re-check and enter either 2, or 3"
             more_results
         end
@@ -174,11 +179,16 @@ class CLI
     end
 
     def after_final_results
-        puts "These are all of the results, what would you like to do?\n"
-        puts "Enter:"
-        puts "1. For more info on an event"
+        puts "These are all of the results, what would you like to do? Would you like more info about any of these events, enter (Y/n)"
+            input = gets.strip
+            if (input.downcase == "y")
+                more_info
+        else
+        puts "Okay, then please enter:"
+        puts "1. If you changed your mind and do want more info on an event"
         puts "2. to restart the program"
         puts "3. to exit"
+        end
         user = gets.strip
         if (user == "1")
             more_info
