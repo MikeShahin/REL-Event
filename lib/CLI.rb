@@ -113,7 +113,7 @@ class CLI
     end
     
     def more_results
-        page = 1
+        @page = 1
         i = @args[2].to_i
         s = @args[2].to_i
         options_after_results
@@ -121,14 +121,14 @@ class CLI
         if (API.returned_results.to_i > @args[2].to_i)   
             while (input == "1") && (API.returned_results.to_i > @args[2].to_i)
                 i += @args[2].to_i
-                page += 1
+                @page += 1
                 Events.clear_all
-                if (page == API.page_count.to_i)
-                    API.new.fetch_events(@args[0], @args[1], @args[2], page)
+                if (@page == API.page_count.to_i)
+                    API.new.fetch_events(@args[0], @args[1], @args[2], @page)
                     list_events
                     after_final_results
                 else
-                    API.new.fetch_events(@args[0], @args[1], @args[2], page)
+                    API.new.fetch_events(@args[0], @args[1], @args[2], @page)
                     list_events
                     puts ("\nShowing " + (i + 1 - s).to_s + "-" + i.to_s + " of " + API.returned_results + " result(s)\n").light_blue
                     options_after_results
@@ -147,14 +147,14 @@ class CLI
         else puts "Sorry, either there are no more results or you spelled something wrong, re-check and enter either 2, or 3"
             more_results
         end
+        @page
     end
 
     def more_info
         puts "Enter the event number you are interested in"
         input = gets.strip
         e = Events.all
-        # puts Events.all[input.to_i - 1].url
-        if (input.to_i > @args[2].to_i) || (input.to_i <= 0)
+        if (input.to_i > e.count) || (input.to_i <= 0)
             puts "Sorry, doesn't match, try again..."
             more_info
         elsif (e[input.to_i - 1].description != nil)
@@ -165,19 +165,30 @@ class CLI
              puts e[input.to_i - 1].url.cyan
              puts ""
         end
-        more_results
+        
+        if (@page == API.page_count.to_i) || (@args[2].to_i > API.returned_results.to_i)
+            after_final_results
+        else 
+            more_results
+        end
     end
 
     def after_final_results
-        puts "These are all of the results, would you like to start over?"
-        puts "Enter 1 to restart the program, 2 to exit"
+        puts "These are all of the results, what would you like to do?\n"
+        puts "Enter:"
+        puts "1. For more info on an event"
+        puts "2. to restart the program"
+        puts "3. to exit"
         user = gets.strip
         if (user == "1")
-            run
+            more_info
         elsif (user == "2")
+            run
+        elsif (user == "3")
             exit
         else
             puts "Sorry, can you please repeat that?"
+            after_final_results
         end
     end
         
