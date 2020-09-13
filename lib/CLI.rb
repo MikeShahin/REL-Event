@@ -6,6 +6,7 @@ class CLI
 
     def run
         Events.clear_all
+        Category.clear_all
         opening
         opening_menu
         if (API.returned_results.to_i < @args[2].to_i)
@@ -62,7 +63,7 @@ class CLI
     end
     
     def fetch_event
-        args = []
+        @args = []
         
         puts "what type of event are you looking for?"
         event_type = gets.strip.to_s
@@ -73,14 +74,14 @@ class CLI
         puts "How many events would you like to see?"
         results_num = gets.strip
         
-        args.push(event_type, event_location, results_num)
+        @args.push(event_type, event_location, results_num)
         
         API.new.fetch_events(event_type, event_location, results_num)
         
-        puts ("\nFound #{API.returned_results} #{args[0]} event(s) near #{args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
+        puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
         list_events
         # binding.pry
-        @args = args
+        @args
     end
 
     def list_events

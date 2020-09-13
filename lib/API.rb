@@ -45,8 +45,8 @@ class API
         @@page_count
     end
 
+    # API call to fetch categories
     def fetch_categories
-        # API call to fetch categories
         c_url = BASE_URL + "categories/list?" + "app_key=" + API_KEY
 
         uri = URI.parse(c_url)
