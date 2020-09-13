@@ -1,5 +1,9 @@
 class CLI
 
+
+    # Events.all[0].description
+    #  Events.all[0].url
+
     def run
         Events.clear_all
         opening
@@ -75,30 +79,34 @@ class CLI
         
         puts ("\nFound " + (API.returned_results) + " results! Showing you "  + (Events.all.count).to_s + " results\n").light_blue
         list_events
-        
+        # binding.pry
         @args = args
     end
 
     def list_events
+        x = 0
         Events.all.each do |e|
+            x += 1
             puts "#########################################################################"
             puts "/////////////////////////////////////////////////////////////////////////"
-            puts "______[  " + e.title.green.bold + "  ]______  "
+            puts "______[  #{x}. #{e.title.green.bold}  ]______  "
             puts "/////////////////////////////////////////////////////////////////////////"
             # puts "*************************************************************************"
             puts "When: ".red + e.date.split(" ")[0] + " at: ".red + e.date.split(" ")[1]
             puts "Where: ".red + e.venue_name + ", " + e.city_name
-            if (e.description != nil)
-                puts "What: ".red + e.description
-                puts "More info at: ".red + e.url.cyan
-            else puts ("Sorry, there is no description for this event, but get more information at:")
-                 puts e.url.cyan
-            end
+            # if (e.description != nil)
+            #     puts "What: ".red + e.description
+            #     puts "More info at: ".red + e.url.cyan
+            # else puts ("Sorry, there is no description for this event, but get more information at:")
+            #      puts e.url.cyan
+            # end
             puts "#########################################################################\n\n"
         end
     end
     
     def options_after_results
+        puts "If you would like more info about any of these events, enter Y"
+        puts "Or else enter the number or the following:"
         puts "1. Get " + @args[2].to_s + " more result(s)."
         puts "2. Start over"
         puts "3. Exit" 
@@ -133,9 +141,31 @@ class CLI
             run
         elsif (input == "3")
             exit
+        elsif (input.downcase == "y")
+            puts "working on more info"
+            more_info
         else puts "Sorry, either there are no more results or you spelled something wrong, re-check and enter either 2, or 3"
             more_results
         end
+    end
+
+    def more_info
+        puts "Enter the event number you are interested in"
+        input = gets.strip
+        e = Events.all
+        # puts Events.all[input.to_i - 1].url
+        if (input.to_i > @args[2].to_i) || (input.to_i <= 0)
+            puts "Sorry, doesn't match, try again..."
+            more_info
+        elsif (e[input.to_i - 1].description != nil)
+            puts "\n\nWhat: ".red + e[input.to_i - 1].description
+            puts "\nMore info at: ".red + e[input.to_i - 1].url.cyan
+            puts ""
+        else puts ("\n\nSorry, there is no description for this event, but get more information at:")
+             puts e[input.to_i - 1].url.cyan
+             puts ""
+        end
+        more_results
     end
 
     def after_final_results
