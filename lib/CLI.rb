@@ -105,15 +105,19 @@ class CLI
     end
     
     def options_after_results
-        puts "If you would like more info about any of these events, enter (Y/n)"
+        puts "If you would like more info about any of these events, enter (y/n)"
         input = gets.strip
         if (input.downcase == "y")
             more_info
-        else
+        elsif (input.downcase == "n")
             puts "Ok, what should we do? Please enter the number for the following:"
             puts "1. Get " + @args[2].to_s + " more result(s)."
             puts "2. Start over"
             puts "3. Exit" 
+        else
+            puts "What you entered is not valid you dunce"
+            sleep(1)
+            options_after_results
         end
     end
     
@@ -163,12 +167,21 @@ class CLI
             puts "Sorry, doesn't match, try again..."
             more_info
         elsif (e[input.to_i - 1].description != nil)
-            puts "\n\nWhat: ".red + e[input.to_i - 1].description
+            puts "#########################################################################"
+            puts "______[  #{e[input.to_i].title.green.bold}  ]______  "
+            puts "*************************************************************************"
+            puts "What: ".red + e[input.to_i - 1].description
             puts "\nMore info at: ".red + e[input.to_i - 1].url.cyan
+            puts "#########################################################################\n\n"
             puts ""
-        else puts ("\n\nSorry, there is no description for this event, but get more information at:")
-             puts e[input.to_i - 1].url.cyan
-             puts ""
+        else 
+            puts "#########################################################################"
+            puts "______[  #{e[input.to_i].title.green.bold}  ]______  "
+            puts "*************************************************************************"
+            puts ("\nSorry, there is no description for this event, but get more information at:")
+            puts e[input.to_i - 1].url.cyan
+            puts "#########################################################################\n\n" 
+            puts ""
         end
         
         if (@page == API.page_count.to_i) || (@args[2].to_i > API.returned_results.to_i)
