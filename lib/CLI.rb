@@ -35,9 +35,10 @@ class CLI
         puts "If you would like to search for an event, enter 1"
         puts "If you would like to see a list of the types of events you can find using this app, enter 2\n\n"
         input = gets.strip.to_s
-        if (input == "1")
+        case input
+        when "1"
             fetch_event
-        elsif (input == "2")
+        when "2"
             fetch_cat
         else
             puts "Sorry, please repeat that..."
@@ -73,44 +74,31 @@ class CLI
         
         puts "How many events would you like to see?"
         results_num = gets.strip
-        
+        if (results_num.to_i > 250)
+            puts "That's waaaaaay too many dude, best I can do is 250"
+        end
         @args.push(event_type, event_location, results_num)
         
-        API.new.fetch_events(event_type, event_location, results_num)
-        
-        puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
-        list_events
+        if (event_type == "") && (event_location == "")
+            puts "Sorry duderino, I can't do all the work for you, please give me something to work with!".red
+            fetch_event
+        else 
+            API.new.fetch_events(event_type, event_location, results_num)
+            puts "Finding you some events".blue
+            puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
+        end
+        Events.list_events
         # binding.pry
         @args
-    end
-
-    def list_events
-        x = 0
-        Events.all.each do |e|
-            x += 1
-            puts "#########################################################################"
-            puts "/////////////////////////////////////////////////////////////////////////"
-            puts "______[  #{x}. #{e.title.green.bold}  ]______  "
-            puts "/////////////////////////////////////////////////////////////////////////"
-            # puts "*************************************************************************"
-            puts "When: ".red + e.date.split(" ")[0] + " at: ".red + e.date.split(" ")[1]
-            puts "Where: ".red + e.venue_name + ", " + e.city_name
-            # if (e.description != nil)
-            #     puts "What: ".red + e.description
-            #     puts "More info at: ".red + e.url.cyan
-            # else puts ("Sorry, there is no description for this event, but get more information at:")
-            #      puts e.url.cyan
-            # end
-            puts "#########################################################################\n\n"
-        end
     end
     
     def options_after_results
         puts "If you would like more info about any of these events, enter (y/n)"
         input = gets.strip
-        if (input.downcase == "y")
+        case input.downcase
+        when "y"
             more_info
-        elsif (input.downcase == "n")
+        when "n"
             puts "Ok, what should we do? Please enter the number for the following:"
             puts "1. Get #{@args[2].to_s} more result(s)."
             puts "2. Start over"
@@ -124,8 +112,7 @@ class CLI
     
     def more_results
         @page = 1
-        i = @args[2].to_i
-        s = @args[2].to_i
+        s = i = @args[2].to_i
         options_after_results
         input = gets.strip
         if (API.returned_results.to_i > @args[2].to_i)   
@@ -135,25 +122,23 @@ class CLI
                 Events.clear_all
                 if (@page == API.page_count.to_i)
                     API.new.fetch_events(@args[0], @args[1], @args[2], @page)
-                    list_events
+                    Events.list_events
                     after_final_results
                 else
                     API.new.fetch_events(@args[0], @args[1], @args[2], @page)
-                    list_events
+                    Events.list_events
                     puts ("\nShowing " + (i + 1 - s).to_s + "-" + i.to_s + " of " + API.returned_results + " result(s)\n").light_blue
                     options_after_results
                     input = gets.strip  
                 end
             end
         end
-        if (input == "2")
+        case input
+        when "2"
             Events.clear_all
             run
-        elsif (input == "3")
+        when "3"
             exit
-        # elsif (input.downcase == "y")
-        #     puts "working on more info"
-        #     more_info
         else puts "Sorry, either there are no more results or you spelled something wrong, re-check and enter either 2, or 3"
             more_results
         end
@@ -193,7 +178,7 @@ class CLI
     end
 
     def after_final_results
-        puts "These are all of the results, what would you like to do? Would you like more info about any of these events, enter (Y/n)"
+        puts "These are all of the results, what would you like to do? Would you like more info about any of these events, enter (y/n)"
             input = gets.strip
             if (input.downcase == "y")
                 more_info
@@ -203,12 +188,14 @@ class CLI
         puts "2. to restart the program"
         puts "3. to exit"
         end
+
         user = gets.strip
-        if (user == "1")
+        case user
+        when "1"
             more_info
-        elsif (user == "2")
+        when "2"
             run
-        elsif (user == "3")
+        when "3"
             exit
         else
             puts "Sorry, can you please repeat that?"

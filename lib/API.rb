@@ -10,6 +10,7 @@ class API
         
         begin   
             url = BASE_URL + 'events/search?app_key=' + API_KEY + "&keywords=#{event_type}" + "&location=#{loc}" + "&page_size=#{num}" + "&page_number=#{page}&sort_order=date"
+            # binding.pry
             uri = URI.parse(url)
             body = uri.read
             resp = Net::HTTP.get_response(uri)
