@@ -32,9 +32,10 @@ class CLI
 
     def opening_menu
         # sleep(1)
-        puts "If you would like to search for an event, enter 1"
-        puts "If you would like to see a list of the types of events you can find using this app, enter 2"
-        puts "if you would like to see your saved events, press 3\n\n"
+        puts "What should we do? Enter a number\n"
+        puts "1. ".red + "If you would like to search for an event"
+        puts "2. ".red + "If you would like to see a list of the types of events you can find using this app"
+        puts "3. ".red + "if you would like to see your saved events\n\n"
         input = gets.strip.to_s
         case input
         when "1"
@@ -42,13 +43,19 @@ class CLI
         when "2"
             fetch_cat
         when "3"
-            if (Saved_events.all.count == 0)
+            if (Saved_events.all.count == 0) && File.zero?("./Saved_events.txt")
                 puts "sorry, you haven't saved any events yet\n\n".light_red
+                # File.open("./Saved_events.txt").each do |l|
+                #     puts l
+                # end
                 opening_menu
             else
-                puts "Here's the #{Saved_events.all.count} event(s) you have saved\n".light_blue
-                Saved_events.list_events
-                puts ""
+                # puts "Here's the #{Saved_events.all.count} event(s) you have saved\n".light_blue
+                # Saved_events.list_events
+                # puts ""
+                File.open("./Saved_events.txt").each do |l|
+                    puts l
+                end
                 opening_menu
             end
         else
@@ -181,6 +188,7 @@ class CLI
             input2 = gets.strip
             if input2.downcase == "y"
                 Saved_events.new(e[input.to_i - 1].city_name, e[input.to_i - 1].venue_name, e[input.to_i - 1].title, e[input.to_i - 1].description, e[input.to_i - 1].url, e[input.to_i - 1].date)
+                store_events
                 # binding.pry
             end
         else 
@@ -195,6 +203,7 @@ class CLI
             input2 = gets.strip
             if input2.downcase == "y"
                 Saved_events.new(e[input.to_i - 1].city_name, e[input.to_i - 1].venue_name, e[input.to_i - 1].title, e[input.to_i - 1].description, e[input.to_i - 1].url, e[input.to_i - 1].date)
+                store_events
                 # binding.pry
             end
         end
@@ -236,5 +245,23 @@ class CLI
         puts "Rebooting...".red.bold
         sleep(1)
         CLI.new.run
+    end
+
+    def store_events
+        File.open("./Saved_events.txt", "a") do |l|
+          Saved_events.all.each do |e|
+            l.puts "\r" + "#########################################################################"
+            l.puts "\r" + "/////////////////////////////////////////////////////////////////////////"
+            l.puts "\r" + "______[  #{e.title.green.bold}  ]______  "
+            l.puts "\r" + "/////////////////////////////////////////////////////////////////////////"
+            l.puts "\r" + "When: ".red + e.date.split(" ")[0] + " at: ".red + e.date.split(" ")[1]
+            l.puts "\r" + "Where: ".red + e.venue_name if e.venue_name + ", " + e.city_name if e.city_name
+            l.puts "\r" + "What: ".red + e.description if e.description 
+            l.puts "\r" + "\nMore info at: ".red + e.url.cyan
+            l.puts "\r" + "#########################################################################\n\n"
+          end
+        end
+        Saved_events.clear_all
+        binding.pry
     end
 end
