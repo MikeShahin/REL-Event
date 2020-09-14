@@ -1,5 +1,5 @@
-class Events
-    attr_reader :city_name, :venue_name, :title, :description, :url, :date, :total_result
+class Saved_events
+    attr_reader :city_name, :venue_name, :title, :description, :url, :date
 
     @@all = []
 
@@ -23,7 +23,7 @@ class Events
 
     def self.list_events
         x = 0
-        Events.all.each do |e|
+        Saved_events.all.each do |e|
             x += 1
             puts "#########################################################################"
             puts "/////////////////////////////////////////////////////////////////////////"
@@ -31,6 +31,8 @@ class Events
             puts "/////////////////////////////////////////////////////////////////////////"
             puts "When: ".red + e.date.split(" ")[0] + " at: ".red + e.date.split(" ")[1]
             puts "Where: ".red + e.venue_name if e.venue_name + ", " + e.city_name if e.city_name
+            puts "What: ".red + e.description if e.description 
+            puts "\nMore info at: ".red + e.url.cyan
             puts "#########################################################################\n\n"
         end
     end

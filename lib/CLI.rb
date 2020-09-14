@@ -33,13 +33,24 @@ class CLI
     def opening_menu
         # sleep(1)
         puts "If you would like to search for an event, enter 1"
-        puts "If you would like to see a list of the types of events you can find using this app, enter 2\n\n"
+        puts "If you would like to see a list of the types of events you can find using this app, enter 2"
+        puts "if you would like to see your saved events, press 3\n\n"
         input = gets.strip.to_s
         case input
         when "1"
             fetch_event
         when "2"
             fetch_cat
+        when "3"
+            if (Saved_events.all.count == 0)
+                puts "sorry, you haven't saved any events yet\n\n".light_red
+                opening_menu
+            else
+                puts "Here's the #{Saved_events.all.count} event(s) you have saved\n".light_blue
+                Saved_events.list_events
+                puts ""
+                opening_menu
+            end
         else
             puts "Sorry, please repeat that..."
             opening_menu
@@ -82,6 +93,9 @@ class CLI
         if (event_type == "") && (event_location == "")
             puts "Sorry duderino, I can't do all the work for you, please give me something to work with!".red
             fetch_event
+        elsif (results_num == "")
+            puts "Sorry duderino, I can't do all the work for you, please give me something to work with!".red
+            fetch_event
         else 
             API.new.fetch_events(event_type, event_location, results_num)
             puts "Finding you some events".blue
@@ -112,7 +126,10 @@ class CLI
     
     def more_results
         @page = 1
-        s = i = @args[2].to_i
+        if (@args[2].to_i > 250)
+            s = i = 250
+        else s = i = @args[2].to_i
+        end
         options_after_results
         input = gets.strip
         if (API.returned_results.to_i > @args[2].to_i)   
@@ -160,6 +177,12 @@ class CLI
             puts "\nMore info at: ".red + e[input.to_i - 1].url.cyan
             puts "#########################################################################\n\n"
             puts ""
+            puts "Would you like to save? (y/n)"
+            input2 = gets.strip
+            if input2.downcase == "y"
+                Saved_events.new(e[input.to_i - 1].city_name, e[input.to_i - 1].venue_name, e[input.to_i - 1].title, e[input.to_i - 1].description, e[input.to_i - 1].url, e[input.to_i - 1].date)
+                # binding.pry
+            end
         else 
             puts "#########################################################################"
             puts "______[  " + input + ". #{e[input.to_i - 1].title.green.bold}  ]______  "
@@ -168,6 +191,12 @@ class CLI
             puts e[input.to_i - 1].url.cyan
             puts "#########################################################################\n\n" 
             puts ""
+            puts "Would you like to save? (y/n)"
+            input2 = gets.strip
+            if input2.downcase == "y"
+                Saved_events.new(e[input.to_i - 1].city_name, e[input.to_i - 1].venue_name, e[input.to_i - 1].title, e[input.to_i - 1].description, e[input.to_i - 1].url, e[input.to_i - 1].date)
+                # binding.pry
+            end
         end
         
         if (@page == API.page_count.to_i) || (@args[2].to_i > API.returned_results.to_i)

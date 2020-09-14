@@ -9,7 +9,7 @@ class API
         loc = loc_split.join("+")
         
         begin   
-            url = BASE_URL + 'events/search?app_key=' + API_KEY + "&keywords=#{event_type}" + "&location=#{loc}" + "&page_size=#{num}" + "&page_number=#{page}&sort_order=date"
+            url = BASE_URL + 'events/search?app_key=' + API_KEY + "&keywords=#{event_type}" + "&location=#{loc}" + "&page_size=#{num}" + "&page_number=#{page}&sort_order=date&date=future"
             # binding.pry
             uri = URI.parse(url)
             body = uri.read
