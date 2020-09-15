@@ -5,6 +5,7 @@ class CLI
     #  Events.all[0].url
 
     def run
+        store_events
         Events.clear_all
         Category.clear_all
         opening
@@ -33,9 +34,10 @@ class CLI
     def opening_menu
         # sleep(1)
         puts "What should we do? Enter a number\n"
-        puts "1. ".red + "If you would like to search for an event"
-        puts "2. ".red + "If you would like to see a list of the types of events you can find using this app"
-        puts "3. ".red + "if you would like to see your saved events\n\n"
+        puts "1. ".red + "If you would like to search for an event."
+        puts "2. ".red + "If you would like to see a list of the types of events you can find using this app."
+        puts "3. ".red + "if you would like to see your saved events."
+        puts "4. ".red + "exit.\n\n"
         input = gets.strip.to_s
         case input
         when "1"
@@ -45,25 +47,33 @@ class CLI
         when "3"
             if (Saved_events.all.count == 0) && File.zero?("./Saved_events.txt")
                 puts "sorry, you haven't saved any events yet\n\n".light_red
-                # File.open("./Saved_events.txt").each do |l|
-                #     puts l
-                # end
                 opening_menu
             else
-                # puts "Here's the #{Saved_events.all.count} event(s) you have saved\n".light_blue
-                # Saved_events.list_events
-                # puts ""
-                File.open("./Saved_events.txt").each do |l|
-                    puts l
-                end
-                opening_menu
+                show_saved_events
             end
+        when "4"
+            exit
         else
             puts "Sorry, please repeat that..."
             opening_menu
         end
     end
     
+    def show_saved_events
+        File.open("./Saved_events.txt").each do |l|
+            puts l
+        end
+        puts "If you would like to delete all of your save events, enter 'delete', or press enter to continue"
+        input = gets.strip
+        if (input.downcase == "delete" )
+            File.open('./Saved_events.txt', 'w') {|file| file.truncate(0) }
+            puts "All events deleted"
+            opening_menu
+        else
+            opening_menu
+        end
+    end
+
     def fetch_cat
         puts "Here are some examples of different categories you can search for:"
         API.new.fetch_categories
@@ -262,6 +272,8 @@ class CLI
           end
         end
         Saved_events.clear_all
-        binding.pry
+        # binding.pry
     end
 end
+
+# File.open('./Saved_events.txt', 'w') {|file| file.truncate(0) }
