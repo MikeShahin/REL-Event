@@ -17,15 +17,15 @@ class API
             data = JSON.parse(resp.body)
             # binding.pry
         rescue JSON::ParserError => e  
-          puts "ooof"
+          puts "Sorry, no events were found with what you just gave me. Try again bud...".light_red
           CLI.reboot
         rescue URI::InvalidURIError
-            puts "BAD URI ERROR"
+            puts "Sorry, no events were found with what you just gave me. Try again bud...".light_red
             CLI.reboot
         end 
         
         if (data["total_items"] == "0")
-            puts "Sorry, no results were found, lets try this thing again"
+            puts "Sorry, I couldn't find anything. I promise it's not my fault though, lets try this thing again!".light_blue
             CLI.reboot
         else
         data_array = data["events"]
