@@ -45,31 +45,18 @@ class CLI
         when "2"
             fetch_cat
         when "3"
-            if (Saved_events.all.count == 0) && File.zero?("./Saved_events.txt")
-                puts "sorry, you haven't saved any events yet\n\n".light_red
-                opening_menu
-            else
+            # if (Saved_events.all.count == 0) && File.zero?("./Saved_events.txt")
+            #     puts "Is this some kind of prank? Are you trying to make me crash? I know you haven't saved any events yet...\n\n".light_red
+            #     sleep(1)
+            #     opening_menu
+            # else
                 show_saved_events
-            end
+                opening_menu
+            # end
         when "4"
             exit
         else
             puts "Sorry, please repeat that..."
-            opening_menu
-        end
-    end
-    
-    def show_saved_events
-        File.open("./Saved_events.txt").each do |l|
-            puts l
-        end
-        puts "If you would like to delete all of your save events, enter 'delete', or press enter to continue"
-        input = gets.strip
-        if (input.downcase == "delete" )
-            File.open('./Saved_events.txt', 'w') {|file| file.truncate(0) }
-            puts "All events deleted"
-            opening_menu
-        else
             opening_menu
         end
     end
@@ -100,24 +87,27 @@ class CLI
         puts "Where should the events be? (enter a city, state, zip code, or country)"
         event_location = gets.strip.to_s
         
+        if (event_type == "") && (event_location == "")
+        puts "Sorry duderino, I can't do all the work for you, please give me something to work with! Lets try this again...".red
+            puts "Rebooting...".red.bold
+            sleep(1)
+            run
+        end 
+        
         puts "How many events would you like to see?"
         results_num = gets.strip
         if (results_num.to_i > 250)
+            results_num = "250"
             puts "That's waaaaaay too many dude, best I can do is 250"
+        elsif  (results_num == "")
+            puts "Alright, since you don't want to tell me how many events to get, lets go with lucky number 7".red
+            results_num = "7"
         end
-        @args.push(event_type, event_location, results_num)
         
-        if (event_type == "") && (event_location == "")
-            puts "Sorry duderino, I can't do all the work for you, please give me something to work with!".red
-            fetch_event
-        elsif (results_num == "")
-            puts "Sorry duderino, I can't do all the work for you, please give me something to work with!".red
-            fetch_event
-        else 
-            API.new.fetch_events(event_type, event_location, results_num)
-            puts "Finding you some events".blue
-            puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
-        end
+        API.new.fetch_events(event_type, event_location, results_num)
+        puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
+        
+        @args.push(event_type, event_location, results_num)
         Events.list_events
         # binding.pry
         @args
@@ -131,9 +121,9 @@ class CLI
             more_info
         when "n"
             puts "Ok, what should we do? Please enter the number for the following:"
-            puts "1. Get #{@args[2].to_s} more result(s)."
-            puts "2. Start over"
-            puts "3. Exit" 
+            puts "1. ".red + "Get #{@args[2].to_s} more result(s)."
+            puts "2. ".red + "Go back to the start"
+            puts "3. ".red + "Exit" 
         else
             puts "What you entered is not valid you dunce"
             sleep(1)
@@ -169,7 +159,6 @@ class CLI
         end
         case input
         when "2"
-            Events.clear_all
             run
         when "3"
             exit
@@ -274,6 +263,23 @@ class CLI
         Saved_events.clear_all
         # binding.pry
     end
-end
 
-# File.open('./Saved_events.txt', 'w') {|file| file.truncate(0) }
+    def show_saved_events
+        if (Saved_events.all.count == 0) && File.zero?("./Saved_events.txt")
+            puts "Is this some kind of prank? Are you trying to make me crash? I know you haven't saved any events yet...\n\n".light_red
+            sleep(1)
+        else
+            File.open("./Saved_events.txt").each do |l|
+            puts l
+        end
+
+        puts "If you would like to delete all of your save events, enter 'delete', or press enter to continue"
+        input = gets.strip
+
+        if (input.downcase == "delete" )
+            File.open('./Saved_events.txt', 'w') {|file| file.truncate(0) }
+            puts "All events deleted"
+            end
+        end
+    end
+end
