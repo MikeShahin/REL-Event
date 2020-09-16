@@ -1,11 +1,0 @@
-#########################################################################
-/////////////////////////////////////////////////////////////////////////
-______[  [1;32;49mBeing Human: An Exhibition Of Modern Sculpture[0m  ]______  
-/////////////////////////////////////////////////////////////////////////
-[0;31;49mWhen: [0m2019-10-05[0;31;49m at: [0m00:00:00
-[0;31;49mWhere: [0mBristol City Museum and Art Gallery
-[0;31;49mWhat: [0m Presenting work from Bristol Museum&#39;s collection, this exhibition focuses on themes of beauty, identity, sexuality and existential angst in the aftermath of war. Being Human features early modernist experimentation by Antoine Bourdelle to 20th century modernism from Henri Gaudier-Brzeska, Jacob Epstein and Willhem Lehmbruck. At the heart of the exhibition are the so-called &#39;Geometry of Fear&#39; sculptors: Lynn Chadwick, Ken Armitage, Reg Butler and Bernard Meadows. These artists lived through the Second World War and produced tortured, twisted forms conveying the angst and perhaps the guilt of having survived. These examples appear alongside work by fellow British sculptors Frank Dobson, Hubert Dalwood, Elisabeth Frink and Ralph Brown as well as new acquisitions by Yeesookyung, Mary Reid Kelley and Wood and Harrison to explore how sculpture embodies the human form.<br>
-[0;31;49m
-More info at: [0m[0;36;49mhttp://bristol.eventful.com/events/being-human-exhibition-modern-sculpture-/E0-001-134199291-6?utm_source=apis&utm_medium=apim&utm_campaign=apic[0m
-#########################################################################
-

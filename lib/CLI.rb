@@ -27,8 +27,7 @@ class CLI
     end
 
     def opening_menu
-        # sleep(1)
-        puts "What should we do? Enter a number\n"
+        puts "What should we do? Enter a number\n".cyan
         puts "1. ".yellow + "Search for an event."
         puts "2. ".yellow + "See a list of the types of events you can find using this app."
         puts "3. ".yellow + "See your saved events."
@@ -70,10 +69,10 @@ class CLI
     def fetch_event
         @args = []
         
-        puts "what type of event are you looking for?"
+        puts "what type of event are you looking for?".cyan
         event_type = gets.strip.to_s
         
-        puts "Where should the events be? (enter a city, state, zip code, or country)"
+        puts "Where should the events be? (enter a city, state, zip code, or country)".cyan
         event_location = gets.strip.to_s
         
         if (event_type == "") && (event_location == "")
@@ -83,33 +82,33 @@ class CLI
             run
         end 
         
-        puts "How many events would you like to see?"
+        puts "How many events would you like to see?".cyan
         results_num = gets.strip
         if (results_num.to_i > 250)
             results_num = "250"
-            puts "That's waaaaaay too many, best I can do is 250"
+            puts "That's waaaaaay too many, best I can do is 250".light_red
         elsif  (results_num == "")
-            puts "Alright, since you don't want to tell me how many events to get, lets go with lucky number 7".red
+            puts "Alright, since you don't want to tell me how many events to get, lets go with lucky number 7".light_red
             results_num = "7"
         end
         
         API.new.fetch_events(event_type, event_location, results_num)
-        puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
-        
         @args.push(event_type, event_location, results_num)
         Events.list_events
+
+        puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
         # binding.pry
         @args
     end
     
     def options_after_results
-        puts "If you would like more info about any of these events, enter (" + "y".yellow + "/" + "n".yellow + ")"
+        puts "If you would like more info about any of these events, enter (".cyan + "y".yellow + "/".cyan + "n".yellow + ")".cyan
         input = gets.strip
         case input.downcase
         when "y"
             more_info
         when "n"
-            puts "Ok, what should we do? Enter the number for the following:"
+            puts "Ok, what should we do? Enter the number for the following:".cyan
             puts "1. ".yellow + "Get #{@args[2].to_s} more result(s)."
             puts "2. ".yellow + "Return to main menu"
             puts "3. ".yellow + "Exit" 
@@ -151,18 +150,18 @@ class CLI
             run
         when "3"
             exit
-        else puts "Sorry there are no more results left. Lets try either 2, or 3".red
+        else puts "There are no more results left for me to show you. Lets try either 2, or 3".cyan
             more_results
         end
         @page
     end
 
     def more_info
-        puts "Enter the event number you are interested in"
+        puts "Enter the event number you are interested in".cyan
         input = gets.strip
         e = Events.all
         if (input.to_i > e.count) || (input.to_i <= 0)
-            puts "Sorry, there currently is no event listed with that number...".red
+            puts "Ughhh, I'm not the brightest program, but I can't find an event listed with whatever you just gave me...".light_red
             more_info
         elsif (e[input.to_i - 1].description != nil)
             puts "#########################################################################"
@@ -172,11 +171,12 @@ class CLI
             puts "\nMore info at: ".red + e[input.to_i - 1].url.cyan
             puts "#########################################################################\n\n"
             puts ""
-            puts "Would you like to save? Gimme a (" + "y".yellow + "/" + "n".yellow + ")"
+            puts "Ooooh this looks fun, should I save it for you? Gimme a (".cyan + "y".yellow + "/".cyan + "n".yellow + ")".cyan
             input2 = gets.strip
             if input2.downcase == "y"
                 Saved_events.new(e[input.to_i - 1].city_name, e[input.to_i - 1].venue_name, e[input.to_i - 1].title, e[input.to_i - 1].description, e[input.to_i - 1].url, e[input.to_i - 1].date)
                 store_events
+                puts "Saved! You can find your saved events from the main menu!".green
                 # binding.pry
             end
         else 
@@ -187,11 +187,12 @@ class CLI
             puts e[input.to_i - 1].url.cyan
             puts "#########################################################################\n\n" 
             puts ""
-            puts "Would you like to save? Gimme a (" + "y".yellow + "/" + "n".yellow + ")"
+            puts "Ooooh this looks fun, should I save it for you? Gimme a (".cyan + "y".yellow + "/".cyan + "n".yellow + ")".cyan
             input2 = gets.strip
             if input2.downcase == "y"
                 Saved_events.new(e[input.to_i - 1].city_name, e[input.to_i - 1].venue_name, e[input.to_i - 1].title, e[input.to_i - 1].description, e[input.to_i - 1].url, e[input.to_i - 1].date)
                 store_events
+                puts "Saved! You can find your saved events from the main menu!".green
                 # binding.pry
             end
         end
@@ -204,12 +205,12 @@ class CLI
     end
 
     def after_final_results
-        puts "These are all of the results! Would you like more info about any of these events, enter (" + "y".yellow + "/" + "n".yellow + ")"
+        puts "These are all of the results! Would you like more info about any of these events, enter (".cyan + "y".yellow + "/".cyan + "n".yellow + ")".cyan
             input = gets.strip
             if (input.downcase == "y")
                 more_info
         else
-        puts "Okay, then please enter:"
+        puts "Okay, then please enter:".cyan
         puts "1.".yellow + " If you changed your mind and do want more info on an event"
         puts "2.".yellow + " Return to main menu"
         puts "3.".yellow + " Exit"
@@ -224,7 +225,7 @@ class CLI
         when "3"
             exit
         else
-            puts "I SAID PICK 1, 2, OR 3. YEEESH".red
+            puts "I SAID PICK 1, 2, OR 3. YEEESH".light_red
             after_final_results
         end
     end
@@ -262,12 +263,13 @@ class CLI
             puts l
         end
 
-        puts "If you would like to delete all of your save events, enter '" + "delete".red.bold + "', or press enter to continue"
+        puts "If you would like to delete all of your save events, enter '".cyan + "delete".red.bold + "', or press enter to continue".cyan
         input = gets.strip
 
         if (input.downcase == "delete" )
             File.open('./Saved_events.txt', 'w') {|file| file.truncate(0) }
             puts "All events deleted".red.bold
+            sleep(1)
             end
         end
     end
