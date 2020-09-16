@@ -96,8 +96,12 @@ class CLI
         @args.push(event_type, event_location, results_num)
         Events.list_events
 
-        puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
+        if (@args[1] == "")
+            puts ("\nFound #{API.returned_results} #{@args[0]} event(s) happening in the world! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
+        else
+            puts ("\nFound #{API.returned_results} #{@args[0]} event(s) near #{@args[1]}! Currently displaying #{Events.all.count.to_s} result(s)\n").light_blue
         # binding.pry
+        end
         @args
     end
     
@@ -168,7 +172,7 @@ class CLI
             puts "______[  " + input + ". #{e[input.to_i - 1].title.green.bold}  ]______  "
             puts "*************************************************************************"
             puts "What: ".red + e[input.to_i - 1].description
-            puts "\nMore info at: ".red + e[input.to_i - 1].url.cyan
+            puts "\nMore info at: ".red + e[input.to_i - 1].url.light_magenta
             puts "#########################################################################\n\n"
             puts ""
             puts "Ooooh this looks fun, should I save it for you? Gimme a (".cyan + "y".yellow + "/".cyan + "n".yellow + ")".cyan
@@ -184,7 +188,7 @@ class CLI
             puts "______[  " + input + ". #{e[input.to_i - 1].title.green.bold}  ]______  "
             puts "*************************************************************************"
             puts ("Sorry, there is no description for this event, but get more information at:")
-            puts e[input.to_i - 1].url.cyan
+            puts e[input.to_i - 1].url.light_magenta
             puts "#########################################################################\n\n" 
             puts ""
             puts "Ooooh this looks fun, should I save it for you? Gimme a (".cyan + "y".yellow + "/".cyan + "n".yellow + ")".cyan
@@ -246,7 +250,7 @@ class CLI
             l.puts "\r" + "When: ".red + e.date.split(" ")[0] + " at: ".red + e.date.split(" ")[1]
             l.puts "\r" + "Where: ".red + e.venue_name if e.venue_name + ", " + e.city_name if e.city_name
             l.puts "\r" + "What: ".red + e.description if e.description 
-            l.puts "\r" + "\nMore info at: ".red + e.url.cyan
+            l.puts "\r" + "\nMore info at: ".red + e.url.light_magenta
             l.puts "\r" + "#########################################################################\n\n"
           end
         end
